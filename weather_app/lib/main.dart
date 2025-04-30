@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hello_app/season.dart';
 
 void main() {
   runApp(WeatherApp());
@@ -67,9 +68,27 @@ class WeatherHomePage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildFeatureButton('Types of Weather'),
-              _buildFeatureButton('Water Cycle'),
-              _buildFeatureButton("Let's play!"),
+              _buildFeatureButton('Types of Weather',
+                    () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SeasonSlideshowPage()),
+                  );
+                },),
+              _buildFeatureButton('Water Cycle',
+    () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const SeasonSlideshowPage()),
+    );
+    },),
+              _buildFeatureButton("Let's play!",
+    () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const SeasonSlideshowPage()),
+    );
+    },),
             ],
           ),
         ],
@@ -77,19 +96,28 @@ class WeatherHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureButton(String label) {
+  Widget _buildFeatureButton(String label, VoidCallback onPressed) {
     return Column(
       children: [
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.yellow,
-            borderRadius: BorderRadius.circular(10),
+        TextButton(
+          onPressed: onPressed,
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.yellow,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
-          child: Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Colors.black, // Needed since TextButton text is white by default
+            ),
+          ),
         ),
-        SizedBox(height: 4),
-        // Mock progress bar
+        const SizedBox(height: 4),
         Container(
           width: 60,
           height: 6,
@@ -99,7 +127,7 @@ class WeatherHomePage extends StatelessWidget {
           ),
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
-            widthFactor: 0.7, // % complete
+            widthFactor: 0.7,
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.green,
@@ -108,9 +136,8 @@ class WeatherHomePage extends StatelessWidget {
             ),
           ),
         ),
-        Icon(Icons.star, color: Colors.yellow, size: 14),
+        const Icon(Icons.star, color: Colors.yellow, size: 14),
       ],
     );
-  }
-}
+  }}
 

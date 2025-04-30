@@ -1,0 +1,2 @@
+C:/Users/ksben/StudioProjects/Weather-Patterns2/weather_app/android/app/.cxx/Debug/1t185k4g/x86/CMakeFiles/edit_cache.dir
+C:/Users/ksben/StudioProjects/Weather-Patterns2/weather_app/android/app/.cxx/Debug/1t185k4g/x86/CMakeFiles/rebuild_cache.dir
