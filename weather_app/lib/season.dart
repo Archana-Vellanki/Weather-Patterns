@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'season_page.dart'; // Your reusable widget
 
+
 class SeasonSlideshowPage extends StatelessWidget {
   const SeasonSlideshowPage({super.key});
 

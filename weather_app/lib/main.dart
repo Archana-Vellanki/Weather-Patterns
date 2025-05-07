@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hello_app/season.dart';
+import 'package:hello_app/quiz_me_weather.dart';
 
 void main() {
   runApp(WeatherApp());
@@ -25,7 +26,7 @@ class WeatherHomePage extends StatelessWidget {
           Stack(
             children: [
               Image.asset(
-                'assets/home_page_header.jpg',
+                'assets/home_page.png',
                 width: double.infinity,
                 height: 250,
                 fit: BoxFit.cover,
@@ -86,7 +87,7 @@ class WeatherHomePage extends StatelessWidget {
     () {
     Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => const SeasonSlideshowPage()),
+      MaterialPageRoute(builder: (context) => QuizMeWeatherPage()),
     );
     },),
             ],
