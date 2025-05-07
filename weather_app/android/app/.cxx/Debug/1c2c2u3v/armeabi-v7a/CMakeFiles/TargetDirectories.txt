@@ -1,0 +1,2 @@
+/Users/srisaisakethchillapalli/StudioProjects/Weather-Patterns-Frugal/weather_app/android/app/.cxx/Debug/1c2c2u3v/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/srisaisakethchillapalli/StudioProjects/Weather-Patterns-Frugal/weather_app/android/app/.cxx/Debug/1c2c2u3v/armeabi-v7a/CMakeFiles/rebuild_cache.dir
