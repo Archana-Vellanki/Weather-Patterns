@@ -1,0 +1,2 @@
+/Users/srisaisakethchillapalli/Desktop/DESKTOP/Frugal/Weather-Patterns/weather_app/android/app/.cxx/Debug/3b25y527/x86/CMakeFiles/edit_cache.dir
+/Users/srisaisakethchillapalli/Desktop/DESKTOP/Frugal/Weather-Patterns/weather_app/android/app/.cxx/Debug/3b25y527/x86/CMakeFiles/rebuild_cache.dir
