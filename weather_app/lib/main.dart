@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hello_app/season.dart';
 import 'package:hello_app/quiz_me_weather.dart';
+import 'package:hello_app/water_cycle.dart';
+
 
 void main() {
   runApp(WeatherApp());
@@ -80,7 +82,7 @@ class WeatherHomePage extends StatelessWidget {
     () {
     Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => const SeasonSlideshowPage()),
+    MaterialPageRoute(builder: (context) => const WaterCyclePage()),
     );
     },),
               _buildFeatureButton("Let's play!",
