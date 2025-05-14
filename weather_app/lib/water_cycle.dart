@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bubble/bubble.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gif_view/gif_view.dart';
 
 class WaterCyclePage extends StatefulWidget {
   const WaterCyclePage({super.key});
@@ -60,10 +61,8 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
           children: [
             // ✅ Step background based on index
             Positioned.fill(
-              child: Image.asset(
-                'assets/water_cycle/step5.gif',
-                fit: BoxFit.contain,
-              ),
+              child:
+              GifView.asset('assets/water_cycle/step5.gif', height: 200, width: 200, frameRate: 60),
             ),
 
             // ✅ Step text
