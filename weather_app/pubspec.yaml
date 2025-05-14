@@ -30,7 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  translator: ^0.1.7
+  translator: ^1.0.3+1
+  bubble: ^1.2.1
+  google_fonts: ^6.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -57,8 +59,12 @@ flutter:
     - assets/summer.png
     - assets/winter.png
     - assets/quiz_background.png
-    - assets/water_cycle/water_cycle.gif
-    - assets/water_cycle/evaporation.gif
+#    - assets/water_cycle/step0.gif
+#    - assets/water_cycle/step1.gif
+#    - assets/water_cycle/step2.gif
+#    - assets/water_cycle/step3.gif
+    - assets/water_cycle/step4.gif
+    - assets/water_cycle/step5.gif
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

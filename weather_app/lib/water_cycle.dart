@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:bubble/bubble.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WaterCyclePage extends StatefulWidget {
   const WaterCyclePage({super.key});
@@ -12,24 +14,25 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
 
   final List<Map<String, String>> _steps = [
     {
-      'text': 'Tap to reveal the first step of the water cycle!',
+      'text': '💧 Ever looked up at the sky and wondered — where do those fluffy clouds ☁️ come from? Or how the rain 🌧️ knows just when to fall? Let’s follow the amazing journey of a tiny water droplet through the water cycle! 🌍✨',
     },
     {
-      'text': 'Evaporation: Water turns into vapor and rises.',
+      'text': '☀️ Step 1 - Evaporation:\nOn a sunny day, the sun shines down 🌞 and warms the water in oceans 🌊, lakes 🏞️, and puddles. This heat turns water into vapor 💨, which rises high into the sky — our droplet is ready for lift-off! 🎈🚀',
     },
-    // {
-    //   'image': 'assets/step2_condensation.gif',
-    //   'text': 'Condensation: Vapor cools and forms clouds.',
-    // },
-    // {
-    //   'image': 'assets/step3_precipitation.gif',
-    //   'text': 'Precipitation: Water falls back as rain.',
-    // },
-    // {
-    //   'image': 'assets/step4_collection.png',
-    //   'text': 'Collection: Water gathers in oceans, lakes, and underground.',
-    // },
+    {
+      'text': '☁️ Step 2 - Condensation:\nUp in the cool sky 🌬️, the vapor cools down and joins other droplets 💧. Together, they form soft, puffy clouds ☁️ like a big droplet sleepover in the sky! 🎉🛌',
+    },
+    {
+      'text': '🌧️ Step 3 - Precipitation:\nThe cloud gets crowded 😅 and heavy — it can’t hold all the droplets anymore! Suddenly, droplets fall as rain 💦, snow ❄️, or hail 🌨️ — splashing back to the ground below! 🪂🌎',
+    },
+    {
+      'text': '🌊 Step 4 - Collection:\nWhere does all that water go? Some flows into rivers 🏞️, lakes 🐟, or oceans 🌊, and some soaks into the ground 🌱.It all gathers, waiting for the sun to shine again 🔄 — and the cycle starts all over! ♻️',
+    },
+    {
+      'text': '🎉 Hooray! You’ve completed the full journey of a water droplet! 💧👏 From 🌞 Evaporation, to ☁️ Condensation, 🌧️ Precipitation, and 🌊 Collection — it’s nature’s magical cycle! ✨ \n🔁 Tap “Replay” to go again or 🏠 “Back to Home” to explore more fun!',
+    },
   ];
+
 
   void _nextStep() {
     if (_stepIndex < _steps.length - 1) {
@@ -39,6 +42,12 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
     }
   }
 
+  void _reset() {
+    setState(() {
+      _stepIndex = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final step = _steps[_stepIndex];
@@ -46,53 +55,89 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
     return Scaffold(
       backgroundColor: Colors.lightBlue[50],
       body: GestureDetector(
-        onTap: _nextStep,
+        onTap: _stepIndex < 5 ? _nextStep : null,
         child: Stack(
           children: [
-            // ✅ Keep background GIF constant
+            // ✅ Step background based on index
             Positioned.fill(
               child: Image.asset(
-                'assets/water_cycle/water_cycle.gif', // Always show this
+                'assets/water_cycle/step5.gif',
                 fit: BoxFit.contain,
               ),
             ),
 
-            // ✅ Overlays per step
-            if (_stepIndex == 1)
-              Positioned(
-                top: 180,
-                left: 80,
-                child: Image.asset(
-                  'assets/water_cycle/evaporation.gif',
-                  width: 400,
-                ),
-              ),
-
-            // ✅ Step description
+            // ✅ Step text
             Positioned(
               top: 40,
-              left: 20,
-              right: 20,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.85),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  step['text']!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 850), // Adjust width here
+                  child: Bubble(
+                    nip: BubbleNip.leftTop, // Or whichever is working for you
+                    color: Colors.white.withOpacity(0.9),
+                    padding: const BubbleEdges.all(16),
+                    child: Text(
+                      step['text']!,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.comicNeue( // ← you can change this to any Google Font
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
+
+
+
+            // ✅ Final screen buttons
+            if (_stepIndex == 5)
+              Positioned(
+                top: 60,
+                right: 50,
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: _reset,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                      ),
+                      child: const Text(
+                        'Replay',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                      ),
+                      child: const Text(
+                        'Back to Home',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
     );
   }
-
 }
