@@ -29,7 +29,7 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
       },
       {
         'question': 'Which season is the coldest?',
-        'image': 'https://weatherandthefourseasonsgr1.weebly.com/uploads/1/4/9/1/14919314/341858562.jpg?664',
+        'image': 'https://weatherandthefourseasonsgr1.weebly.com/uploads/1/4/9/1/14919314/341858562.jpg?664n',
         'options': ['Summer', 'Winter', 'Spring'],
         'answer': 'Winter',
       },
