@@ -2,18 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:hello_app/season.dart';
 import 'package:hello_app/quiz_me_weather.dart';
 import 'package:hello_app/water_cycle.dart';
-
+import 'weather_pattern_page.dart';
 
 void main() {
-  runApp(WeatherApp());
+  runApp(const MyApp());
 }
 
-class WeatherApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: WeatherHomePage(),
+      title: 'Weather Patterns for Kids',
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Comic Sans MS',
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(fontSize: 16.0),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 3,
+          ),
+        ),
+      ),
+      home: WeatherHomePage(),
     );
   }
 }
@@ -79,21 +94,35 @@ class WeatherHomePage extends StatelessWidget {
                   );
                 },),
               _buildFeatureButton('Water Cycle',
-    () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const WaterCyclePage()),
-    );
-    },),
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const WaterCyclePage()),
+                  );
+                },),
+                
+                _buildFeatureButton('Weather Patterns',
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const WeatherPatternPage()),
+                  );
+                },),
+
               _buildFeatureButton("Let's play!",
-    () {
-    Navigator.push(
-    context,
-      MaterialPageRoute(builder: (context) => QuizMeWeatherPage()),
-    );
-    },),
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => QuizMeWeatherPage()),
+                  );
+                },),
+                
             ],
           ),
+          
+          SizedBox(height: 20),
+          
+          // New button row for Weather Patterns
         ],
       ),
     );
@@ -142,5 +171,6 @@ class WeatherHomePage extends StatelessWidget {
         const Icon(Icons.star, color: Colors.yellow, size: 14),
       ],
     );
-  }}
+  }
+}
 
