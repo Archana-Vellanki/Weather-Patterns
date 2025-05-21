@@ -60,12 +60,16 @@ flutter:
     - assets/summer.png
     - assets/winter.png
     - assets/quiz_background.png
+
+    - assets/fall.png
+    - assets/spring.png
 #    - assets/water_cycle/step0.gif
 #    - assets/water_cycle/step1.gif
 #    - assets/water_cycle/step2.gif
 #    - assets/water_cycle/step3.gif
     - assets/water_cycle/step4.gif
     - assets/water_cycle/step5.gif
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
