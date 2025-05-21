@@ -60,16 +60,28 @@ flutter:
     - assets/summer.png
     - assets/winter.png
     - assets/quiz_background.png
-
     - assets/fall.png
     - assets/spring.png
-#    - assets/water_cycle/step0.gif
-#    - assets/water_cycle/step1.gif
-#    - assets/water_cycle/step2.gif
-#    - assets/water_cycle/step3.gif
+    - assets/water_cycle/step0.gif
+    - assets/water_cycle/step1.gif
+    - assets/water_cycle/step2.gif
+    - assets/water_cycle/step3.gif
     - assets/water_cycle/step4.gif
     - assets/water_cycle/step5.gif
-
+    - assets/weather_pattern/sunny_day.png
+    - assets/weather_pattern/cloudy_weather.png
+    - assets/weather_pattern/partly_cloudy.png
+    - assets/weather_pattern/rainy_day.png
+    - assets/weather_pattern/snowy_weather.png
+    - assets/weather_pattern/windy.png
+    - assets/weather_pattern/thunderstorm.png
+    - assets/weather_pattern/foggy_day.png
+    - assets/weather_pattern/rainbow.png
+    - assets/weather_pattern/ice_balls.png
+    - assets/weather_pattern/frosty_sparkling_morning.png
+    - assets/weather_pattern/slippery_day.png
+    - assets/weather_pattern/hew_drop.png
+    - assets/weather_pattern/mystery_mist.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
