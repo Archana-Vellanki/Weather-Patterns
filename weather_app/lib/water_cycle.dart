@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:bubble/bubble.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gif_view/gif_view.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'translation_service.dart';
 
 class WaterCyclePage extends StatefulWidget {
   const WaterCyclePage({super.key});
@@ -12,6 +14,9 @@ class WaterCyclePage extends StatefulWidget {
 
 class _WaterCyclePageState extends State<WaterCyclePage> {
   int _stepIndex = 0;
+  bool _isSpanish = false;
+  bool _isTranslating = false;
+  final FlutterTts _flutterTts = FlutterTts();
 
   final List<Map<String, String>> _steps = [
     {
@@ -27,13 +32,26 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
       'text': '🌧️ Step 3 - Precipitation:\nThe cloud gets crowded 😅 and heavy — it can’t hold all the droplets anymore! Suddenly, droplets fall as rain 💦, snow ❄️, or hail 🌨️ — splashing back to the ground below! 🪂🌎',
     },
     {
-      'text': '🌊 Step 4 - Collection:\nWhere does all that water go? Some flows into rivers 🏞️, lakes 🐟, or oceans 🌊, and some soaks into the ground 🌱.It all gathers, waiting for the sun to shine again 🔄 — and the cycle starts all over! ♻️',
+      'text': '🌊 Step 4 - Collection:\nWhere does all that water go? Some flows into rivers 🏞️, lakes 🐟, or oceans 🌊, and some soaks into the ground 🌱. It all gathers, waiting for the sun to shine again 🔄 — and the cycle starts all over! ♻️',
     },
     {
       'text': '🎉 Hooray! You’ve completed the full journey of a water droplet! 💧👏 From 🌞 Evaporation, to ☁️ Condensation, 🌧️ Precipitation, and 🌊 Collection — it’s nature’s magical cycle! ✨ \n🔁 Tap “Replay” to go again or 🏠 “Back to Home” to explore more fun!',
     },
   ];
 
+  final List<String?> _translatedTexts = List.filled(6, null);
+
+  @override
+  void initState() {
+    super.initState();
+    _flutterTts.setLanguage("en-US");
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
+  }
 
   void _nextStep() {
     if (_stepIndex < _steps.length - 1) {
@@ -49,9 +67,42 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
     });
   }
 
+  Future<void> _toggleLanguage() async {
+    setState(() {
+      _isTranslating = true;
+    });
+
+    _isSpanish = !_isSpanish;
+
+    if (_isSpanish) {
+      for (int i = 0; i < _steps.length; i++) {
+        if (_translatedTexts[i] == null) {
+          final translated = await TranslationService.translate(_steps[i]['text']!, 'es');
+          _translatedTexts[i] = translated;
+        }
+      }
+    }
+
+    await _flutterTts.setLanguage(_isSpanish ? 'es-ES' : 'en-US');
+
+    setState(() {
+      _isTranslating = false;
+    });
+  }
+
+  Future<void> _speakCurrentText() async {
+    final text = _isSpanish
+        ? _translatedTexts[_stepIndex] ?? ''
+        : _steps[_stepIndex]['text']!;
+    await _flutterTts.stop();
+    await _flutterTts.speak(text);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final step = _steps[_stepIndex];
+    final stepText = _isSpanish
+        ? _translatedTexts[_stepIndex] ?? '...'
+        : _steps[_stepIndex]['text']!;
 
     return Scaffold(
       backgroundColor: Colors.lightBlue[50],
@@ -59,28 +110,32 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
         onTap: _stepIndex < 5 ? _nextStep : null,
         child: Stack(
           children: [
-            // ✅ Step background based on index
+            // ✅ Background
             Positioned.fill(
-              child:
-              GifView.asset('assets/water_cycle/step5.gif', height: 200, width: 200, frameRate: 60),
+              child: GifView.asset(
+                'assets/water_cycle/step5.gif',
+                height: 200,
+                width: 200,
+                frameRate: 60,
+              ),
             ),
 
-            // ✅ Step text
+            // ✅ Speech Bubble Text
             Positioned(
               top: 40,
               left: 0,
               right: 0,
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 850), // Adjust width here
+                  constraints: const BoxConstraints(maxWidth: 850),
                   child: Bubble(
-                    nip: BubbleNip.leftTop, // Or whichever is working for you
+                    nip: BubbleNip.leftTop,
                     color: Colors.white.withOpacity(0.9),
                     padding: const BubbleEdges.all(16),
                     child: Text(
-                      step['text']!,
+                      stepText,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.comicNeue( // ← you can change this to any Google Font
+                      style: GoogleFonts.comicNeue(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
@@ -91,13 +146,24 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
               ),
             ),
 
-
+            // ✅ Top-right Buttons: Translate + Audio
+            Positioned(
+              top: 50,
+              right: 20,
+              child: Row(
+                children: [
+                  _buildAudioButton(),
+                  const SizedBox(width: 12),
+                  _buildTranslateButton(),
+                ],
+              ),
+            ),
 
             // ✅ Final screen buttons
             if (_stepIndex == 5)
               Positioned(
-                top: 60,
-                right: 50,
+                top: 100,
+                right: 30,
                 child: Column(
                   children: [
                     ElevatedButton(
@@ -137,6 +203,40 @@ class _WaterCyclePageState extends State<WaterCyclePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTranslateButton() {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      child: _isTranslating
+          ? const SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          : IconButton(
+              key: const ValueKey('translate-btn'),
+              icon: Icon(
+                Icons.translate,
+                color: _isSpanish ? Colors.blue[300] : Colors.black,
+                size: 30,
+              ),
+              onPressed: _toggleLanguage,
+            ),
+    );
+  }
+
+  Widget _buildAudioButton() {
+    return IconButton(
+      icon: const Icon(
+        Icons.volume_up,
+        color: Colors.black,
+        size: 30,
+      ),
+      onPressed: _speakCurrentText,
     );
   }
 }
