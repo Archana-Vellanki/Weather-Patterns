@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'season_page.dart';
 import 'translation_service.dart';
 
@@ -12,6 +13,8 @@ class SeasonSlideshowPage extends StatefulWidget {
 class _SeasonSlideshowPageState extends State<SeasonSlideshowPage> {
   bool _isSpanish = false;
   bool _isTranslating = false;
+  int _currentPageIndex = 0;
+  final FlutterTts _flutterTts = FlutterTts();
 
   final List<Map<String, dynamic>> _seasons = [
     {
@@ -60,6 +63,7 @@ class _SeasonSlideshowPageState extends State<SeasonSlideshowPage> {
   void initState() {
     super.initState();
     _precacheTranslations();
+    _flutterTts.setLanguage("en-US");
   }
 
   Future<void> _precacheTranslations() async {
@@ -73,7 +77,21 @@ class _SeasonSlideshowPageState extends State<SeasonSlideshowPage> {
   Future<void> _toggleLanguage() async {
     setState(() => _isTranslating = true);
     _isSpanish = !_isSpanish;
+    await _flutterTts.setLanguage(_isSpanish ? 'es-ES' : 'en-US');
     setState(() => _isTranslating = false);
+  }
+
+  Future<void> _speakCurrentSeasonText() async {
+    final season = _seasons[_currentPageIndex];
+    final text = '${season['title']}. ${season['description']}';
+    await _flutterTts.stop();
+    await _flutterTts.speak(text);
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
   }
 
   @override
@@ -82,6 +100,9 @@ class _SeasonSlideshowPageState extends State<SeasonSlideshowPage> {
       body: Stack(
         children: [
           PageView(
+            onPageChanged: (index) {
+              setState(() => _currentPageIndex = index);
+            },
             children: _seasons.map<Widget>((season) => SeasonPage(
               title: season['title'] as String,
               imagePath: season['image'] as String,
@@ -95,10 +116,23 @@ class _SeasonSlideshowPageState extends State<SeasonSlideshowPage> {
           Positioned(
             top: 40,
             right: 20,
-            child: _buildTranslateButton(),
+            child: Row(
+              children: [
+                _buildAudioButton(),
+                const SizedBox(width: 8),
+                _buildTranslateButton(),
+              ],
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAudioButton() {
+    return IconButton(
+      icon: const Icon(Icons.volume_up, color: Colors.white, size: 32),
+      onPressed: _speakCurrentSeasonText,
     );
   }
 
@@ -107,17 +141,17 @@ class _SeasonSlideshowPageState extends State<SeasonSlideshowPage> {
       duration: const Duration(milliseconds: 300),
       child: _isTranslating
           ? const CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-      )
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            )
           : IconButton(
-        key: const ValueKey('translate-btn'),
-        icon: Icon(
-          Icons.translate,
-          color: _isSpanish ? Colors.blue[200] : Colors.white,
-          size: 32,
-        ),
-        onPressed: _toggleLanguage,
-      ),
+              key: const ValueKey('translate-btn'),
+              icon: Icon(
+                Icons.translate,
+                color: _isSpanish ? Colors.blue[200] : Colors.white,
+                size: 32,
+              ),
+              onPressed: _toggleLanguage,
+            ),
     );
   }
 }

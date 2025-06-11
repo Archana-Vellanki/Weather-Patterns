@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:translator/translator.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class QuizMeWeatherPage extends StatefulWidget {
   @override
@@ -12,6 +13,7 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
   bool _isTranslated = false;
   final Map<int, String> _userAnswers = {};
   final translator = GoogleTranslator();
+  final FlutterTts _flutterTts = FlutterTts();
 
   late final List<Map<String, Object>> _originalQuestions;
   late List<Map<String, Object>> _questions;
@@ -22,8 +24,7 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
     _originalQuestions = [
       {
         'question': 'What causes thunder?',
-        'image':
-        'https://images.pexels.com/photos/2684011/pexels-photo-2684011.jpeg',
+        'image': 'https://images.pexels.com/photos/2684011/pexels-photo-2684011.jpeg',
         'options': ['Wind', 'Lightning', 'Rain'],
         'answer': 'Lightning',
       },
@@ -35,29 +36,30 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
       },
       {
         'question': 'Which cloud is fluffy and white?',
-        'image':
-        'https://images.pexels.com/photos/4610805/pexels-photo-4610805.jpeg',
+        'image': 'https://images.pexels.com/photos/4610805/pexels-photo-4610805.jpeg',
         'options': ['Cumulus', 'Stratus', 'Nimbus'],
         'answer': 'Cumulus',
       },
       {
         'question': 'What do we see in the sky after rain and sun?',
-        'image':
-        'https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg',
+        'image': 'https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg',
         'options': ['Clouds', 'Rainbow', 'Lightning'],
         'answer': 'Rainbow',
       },
       {
         'question': 'What instrument measures temperature?',
-        'image':
-        'https://images.pexels.com/photos/356040/pexels-photo-356040.jpeg',
+        'image': 'https://images.pexels.com/photos/356040/pexels-photo-356040.jpeg',
         'options': ['Barometer', 'Thermometer', 'Rain Gauge'],
         'answer': 'Thermometer',
       },
     ];
-
-    // Start with English questions
     _questions = List.from(_originalQuestions);
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
   }
 
   void _answerQuestion(String selected) {
@@ -72,18 +74,18 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
   Future<void> _toggleTranslation() async {
     if (!_isTranslated) {
       final translated = await Future.wait(_originalQuestions.map((q) async {
-        final translatedQuestion =
-        await translator.translate(q['question'] as String, to: 'es');
-        final translatedAnswer =
-        await translator.translate(q['answer'] as String, to: 'es');
-        return <String, Object>{
+        final translatedQuestion = await translator.translate(q['question'] as String, to: 'es');
+        final translatedAnswer = await translator.translate(q['answer'] as String, to: 'es');
+        final translatedOptions = await Future.wait(
+          (q['options'] as List<String>).map((opt) => translator.translate(opt, to: 'es')),
+        );
+        return {
           'question': translatedQuestion.text,
           'image': q['image'] as String,
-          'options': q['options'] as List<String>,
+          'options': translatedOptions.map((e) => e.text).toList(),
           'answer': translatedAnswer.text,
         };
       }));
-
       setState(() {
         _questions = translated;
         _isTranslated = true;
@@ -96,6 +98,12 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
     }
   }
 
+  Future<void> _readQuestionAloud() async {
+    final questionText = _questions[_currentIndex]['question'] as String;
+    await _flutterTts.setLanguage(_isTranslated ? 'es-ES' : 'en-US');
+    await _flutterTts.speak(questionText);
+  }
+
   @override
   Widget build(BuildContext context) {
     final isQuizDone = _currentIndex >= _questions.length;
@@ -103,38 +111,39 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
     final cardWidth = screenWidth > 600 ? screenWidth * 0.7 : screenWidth * 0.9;
 
     return Scaffold(
-      extendBodyBehindAppBar: true, // ✅ this allows the background to go behind AppBar
-      backgroundColor: Colors.transparent, // so background image shows
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-          backgroundColor: Colors.white.withOpacity(0.7),
+        backgroundColor: Colors.white.withOpacity(0.7),
         elevation: 0,
         title: const Text(
           'Weather Quiz Time!',
           style: TextStyle(fontFamily: 'ComicSans', color: Colors.black),
         ),
         centerTitle: true,
-        actions: isQuizDone
-            ? [
+        actions: [
           IconButton(
-            icon: const Icon(Icons.translate),
+            icon: const Icon(Icons.volume_up, color: Colors.black),
+            tooltip: 'Read Aloud',
+            onPressed: _readQuestionAloud,
+          ),
+          IconButton(
+            icon: const Icon(Icons.translate, color: Colors.black),
             tooltip: _isTranslated ? 'Translate to English' : 'Translate to Spanish',
             onPressed: _toggleTranslation,
-          )
-        ]
-            : null,
+          ),
+        ],
       ),
       body: Stack(
         children: [
-          // ✅ Fullscreen background image
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/quiz_background.png'),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          // ✅ Foreground quiz content
           isQuizDone ? _buildResults(cardWidth) : _buildQuestionCard(cardWidth),
         ],
       ),
@@ -148,9 +157,7 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
         elevation: 10,
         color: Colors.yellow[100],
         margin: const EdgeInsets.all(20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           width: cardWidth,
           padding: const EdgeInsets.all(24.0),
@@ -175,7 +182,7 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
               ),
               const SizedBox(height: 20),
               ...(q['options'] as List<String>).map(
-                    (opt) => Padding(
+                (opt) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: _HoverButton(
                     label: opt,
@@ -203,7 +210,7 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                Text(
+                const Text(
                   'Quiz Finished!',
                   style: TextStyle(
                     fontSize: 28,
@@ -212,10 +219,10 @@ class _QuizMeWeatherPageState extends State<QuizMeWeatherPage> {
                     fontFamily: 'ComicSans',
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   'Your score is $_score / ${_questions.length}',
-                  style: TextStyle(fontSize: 22, fontFamily: 'ComicSans'),
+                  style: const TextStyle(fontSize: 22, fontFamily: 'ComicSans'),
                 ),
                 const SizedBox(height: 24),
                 const Divider(thickness: 2),
@@ -304,7 +311,7 @@ class _HoverButtonState extends State<_HoverButton> {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor:
-          _hovering ? Colors.deepPurpleAccent : Colors.lightBlueAccent,
+              _hovering ? Colors.deepPurpleAccent : Colors.lightBlueAccent,
           minimumSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
